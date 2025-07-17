@@ -1,5 +1,5 @@
 import { auth } from "./firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, User } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 // Usar nome + grupo como email fake (ex: will-123456@amigosecreto.com)
 export function makeFakeEmail(nome: string, codigoGrupo: string) {

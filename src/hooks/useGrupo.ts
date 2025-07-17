@@ -3,7 +3,7 @@ import { db } from "@/services/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 
 export function useGrupo(groupCode: string) {
-  const [grupo, setGrupo] = useState<any>(null);
+  const [grupo, setGrupo] = useState<unknown>(null);
   useEffect(() => {
     if (!groupCode) return;
     const ref = doc(db, "groups", groupCode);

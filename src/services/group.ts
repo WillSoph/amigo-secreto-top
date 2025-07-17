@@ -1,5 +1,5 @@
 import { db } from "./firebase";
-import { setDoc, doc, Timestamp, getDoc, updateDoc, deleteDoc, collection, addDoc, getDocs } from "firebase/firestore";
+import { setDoc, doc, Timestamp, getDoc, updateDoc, deleteDoc, collection, getDocs } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 
 export async function criarGrupoComAdmin({ codigo, nome, descricao, adminNome, adminSenha }) {
@@ -45,14 +45,13 @@ export async function getGrupoByCodigo(codigo: string) {
   
   // Rodar sorteio
   export async function rodarSorteioGrupo(groupCode: string) {
-    const col = collection(db, "groups", groupCode, "participants");
     const snapshot = await getDocs(collection(db, "groups", groupCode, "participants"));
     const participantes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
     if (participantes.length < 2) throw new Error("Precisa de pelo menos 3 participantes!");
   
     // Embaralha:
-    let sorteio: Record<string, string> = {};
-    let list = [...participantes];
+    const sorteio: Record<string, string> = {};
+    const list = [...participantes];
     for (let i = list.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [list[i], list[j]] = [list[j], list[i]];

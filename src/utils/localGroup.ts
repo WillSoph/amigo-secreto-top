@@ -79,9 +79,9 @@ export type Participante = {
     const nomes = grupo.participantes.map((p) => p.nome);
     if (nomes.length < 2) return;
     let sorteados = [...nomes];
-    let sorteio: { [nome: string]: string } = {};
+    const sorteio: { [nome: string]: string } = {};
   
-    for (let nome of nomes) {
+    for (const nome of nomes) {
       let opcoes = sorteados.filter((n) => n !== nome && !Object.values(sorteio).includes(n));
       if (opcoes.length === 0) opcoes = sorteados.filter((n) => n !== nome);
       const escolhido = opcoes[Math.floor(Math.random() * opcoes.length)];
