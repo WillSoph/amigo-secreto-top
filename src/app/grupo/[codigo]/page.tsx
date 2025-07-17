@@ -31,13 +31,23 @@ function usuarioEhPremium(participantes: any[], userId: string) {
 
 const STORAGE_KEY = "amigosecreto:user";
 
+type Participante = {
+  id: string;
+  nome: string;
+  isAdmin?: boolean;
+  desejo?: string;
+  blockedId?: string;
+  [key: string]: any; // Se quiser permitir outros campos
+};
+
+
 export default function GrupoPage({ params }: { params: Promise<{ codigo: string }> }) {
   // Unwrap o param
   const { codigo } = use(params);
 
   const [editNome, setEditNome] = useState(false);
   const [novoNome, setNovoNome] = useState("");
-  const [usuarioLogado, setUsuarioLogadoState] = useState<{ nome: string; isAdmin: boolean; id?: string } | null>(null);
+  const [usuarioLogado, setUsuarioLogadoState] = useState<Participante | null>(null);
   const [participantToRemove, setParticipantToRemove] = useState<string | null>(null);
   const [participantToRemoveName, setParticipantToRemoveName] = useState<string>("");
   const [setCopied] = useState(false);
@@ -51,8 +61,9 @@ export default function GrupoPage({ params }: { params: Promise<{ codigo: string
   const [blockedName, setBlockedName] = useState<string>("");
 
   const router = useRouter();
-  const participantes = useParticipantes(codigo);
-  const grupo = useGrupo(codigo); // <-- agora o grupo é sempre atualizado em tempo real!
+  const participantes = useParticipantes(codigo) as Participante[];
+
+  const grupo = useGrupo(codigo) as { nome?: string; sorteio?: boolean }; // Define the expected shape of grupo
 
   // Persiste login no storage ao logar
   const setUsuarioLogado = useCallback((user: any) => {
@@ -312,7 +323,7 @@ export default function GrupoPage({ params }: { params: Promise<{ codigo: string
             participantes={participantes}
             isAdmin={usuarioLogado?.isAdmin === true}
             onRemove={handleRemoveParticipante}
-            sorteioRealizado={!!grupo?.sorteio}
+            sorteioRealizado={grupo?.sorteio || false}
           />
 
           {/* Ações do admin */}
