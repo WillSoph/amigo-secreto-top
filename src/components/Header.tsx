@@ -17,7 +17,7 @@ export default function Header({ onLogout }: Props) {
   return (
     <header className="flex items-center justify-between px-4 sm:px-8 py-3 sm:py-4 bg-white border-b shadow-sm relative">
       <div className="flex items-center gap-2 sm:gap-3">
-        <Button variant="ghost" size="icon" onClick={() => router.push("/")}>
+        <Button variant="ghost" size="sm" onClick={() => router.push("/")}>
           <ArrowLeft size={20} />
         </Button>
         <Image
@@ -32,12 +32,12 @@ export default function Header({ onLogout }: Props) {
 
       {/* Menu Desktop */}
       <nav className="hidden sm:flex items-center space-x-4">
-        <Button variant="link" onClick={() => router.push("/")}>
+        <Button variant="outline" onClick={() => router.push("/")}>
           Home
         </Button>
         <Button
           variant="outline"
-          onClick={() => { setOpen(false); onLogout(); }}
+          onClick={() => { setOpen(false); onLogout?.(); }}
         >
           Logout
         </Button>
@@ -71,7 +71,7 @@ export default function Header({ onLogout }: Props) {
               <X size={24} />
             </button>
             <nav className="flex flex-col space-y-4 mt-10">
-              <Button variant="link" onClick={() => { setOpen(false); router.push("/"); }}>
+              <Button variant="outline" onClick={() => { setOpen(false); router.push("/"); }}>
                 Home
               </Button>
               {/* Outros menus aqui */}

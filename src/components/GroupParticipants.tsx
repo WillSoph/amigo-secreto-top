@@ -40,7 +40,7 @@ export default function GroupParticipants({ participantes, isAdmin, onRemove, so
             {/* Só mostra botão se não houve sorteio */}
             {isAdmin && !p.isAdmin && !sorteioRealizado && (
               <Button
-                size="icon"
+                size="sm"
                 variant="ghost"
                 className="ml-2 flex-shrink-0"
                 aria-label={`Remover ${p.nome}`}

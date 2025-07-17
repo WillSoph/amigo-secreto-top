@@ -2,7 +2,15 @@ import { db } from "./firebase";
 import { setDoc, doc, Timestamp, getDoc, updateDoc, deleteDoc, collection, getDocs } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 
-export async function criarGrupoComAdmin({ codigo, nome, descricao, adminNome, adminSenha }) {
+interface CriarGrupoComAdminParams {
+  codigo: string;
+  nome: string;
+  descricao?: string;
+  adminNome: string;
+  adminSenha: string;
+}
+
+export async function criarGrupoComAdmin({ codigo, nome, descricao, adminNome, adminSenha }: CriarGrupoComAdminParams) {
     // 1. Cria o grupo
     const adminUid = uuidv4(); // Gere um id único para o admin
     await setDoc(doc(db, "groups", codigo), {

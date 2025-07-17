@@ -14,7 +14,7 @@ type Props = {
   grupo: any;
   participantes: any[];
   atualizarGrupo: () => void;
-  onLogin: (user: { nome: string; isAdmin: boolean; id: string }) => void;
+  onLogin: (user: { nome: string; isAdmin: boolean; id: string; desejo?: string }) => void;
 };
 
 const getStorageKey = (groupCode: string) => `amigosecreto:user:${groupCode}`;
@@ -114,7 +114,12 @@ export default function GroupTabs({
       setErro("Nome ou senha inválidos.");
       return;
     }
-    const p = encontrados[0];
+    const p: { id: string; nome: string; isAdmin: boolean; desejo?: string } = {
+      id: encontrados[0].id,
+      nome: 'nome' in encontrados[0] ? (encontrados[0].nome as string) : "",
+      isAdmin: 'isAdmin' in encontrados[0] ? !!encontrados[0].isAdmin : false,
+      desejo: 'desejo' in encontrados[0] ? (encontrados[0].desejo as string) : undefined,
+    };
     setUsuario(p);
     setDesejo(p.desejo || "");
     localStorage.setItem(getStorageKey(groupCode), JSON.stringify(p));
