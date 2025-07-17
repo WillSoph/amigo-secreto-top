@@ -40,7 +40,7 @@ export default function GrupoPage({ params }: { params: Promise<{ codigo: string
   const [usuarioLogado, setUsuarioLogadoState] = useState<{ nome: string; isAdmin: boolean; id?: string } | null>(null);
   const [participantToRemove, setParticipantToRemove] = useState<string | null>(null);
   const [participantToRemoveName, setParticipantToRemoveName] = useState<string>("");
-  const [copied, setCopied] = useState(false);
+  const [setCopied] = useState(false);
 
   // Dialog states
   const [dialogSorteioOpen, setDialogSorteioOpen] = useState(false);

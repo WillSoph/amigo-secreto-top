@@ -2,9 +2,6 @@
 import { Button } from "./ui/button";
 import { X } from "lucide-react";
 
-// Estilos customizados para scrollbar suave
-const scrollbarClass =
-  "scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent hover:scrollbar-thumb-slate-400";
 
 type Props = {
   participantes: any[];
