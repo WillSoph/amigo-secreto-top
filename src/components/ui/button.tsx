@@ -30,17 +30,14 @@ export interface ButtonProps
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const Button = React.forwardRef<unknown, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp: React.ElementType = asChild ? "a" : "button";
-    return (
-      <Comp
-        className={[buttonVariants({ variant, size }), className].join(" ")}
-        ref={ref}
-        {...props}
-      />
-    );
-  }
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, ...props }, ref) => (
+    <button
+      className={[buttonVariants({ variant, size }), className].join(" ")}
+      ref={ref}
+      {...props}
+    />
+  )
 );
 Button.displayName = "Button";
 
