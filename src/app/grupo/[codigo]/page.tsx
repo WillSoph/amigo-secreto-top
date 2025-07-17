@@ -228,7 +228,7 @@ export default function GrupoPage({ params }: { params: Promise<{ codigo: string
             </Button>
             <Button
               onClick={handleDeleteConfirm}
-              variant="destructive"
+              variant="outline"
             >
               Excluir grupo
             </Button>
@@ -252,7 +252,7 @@ export default function GrupoPage({ params }: { params: Promise<{ codigo: string
             </Button>
             <Button
               onClick={handleResetConfirm}
-              variant="destructive"
+              variant="outline"
             >
               Resetar grupo
             </Button>
@@ -297,10 +297,10 @@ export default function GrupoPage({ params }: { params: Promise<{ codigo: string
                   <h1 className="text-xl md:text-2xl font-bold text-primary break-words max-w-xs md:max-w-md">{grupo?.nome || "Grupo não encontrado"}</h1>
                   {usuarioLogado?.isAdmin && (
                     <>
-                      <Button size="icon" variant="ghost" onClick={() => { setEditNome(true); setNovoNome(grupo?.nome || "") }}>
+                      <Button size="sm" variant="ghost" onClick={() => { setEditNome(true); setNovoNome(grupo?.nome || "") }}>
                         <Pencil size={18} />
                       </Button>
-                      <Button size="icon" variant="ghost" onClick={handleRemoverGrupo}>
+                      <Button size="sm" variant="ghost" onClick={handleRemoverGrupo}>
                         <Trash size={18} />
                       </Button>
                     </>
