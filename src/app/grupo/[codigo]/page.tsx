@@ -50,7 +50,7 @@ export default function GrupoPage({ params }: { params: Promise<{ codigo: string
   const [usuarioLogado, setUsuarioLogadoState] = useState<Participante | null>(null);
   const [participantToRemove, setParticipantToRemove] = useState<string | null>(null);
   const [participantToRemoveName, setParticipantToRemoveName] = useState<string>("");
-  const [setCopied] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Dialog states
   const [dialogSorteioOpen, setDialogSorteioOpen] = useState(false);
@@ -64,6 +64,8 @@ export default function GrupoPage({ params }: { params: Promise<{ codigo: string
   const participantes = useParticipantes(codigo) as Participante[];
 
   const grupo = useGrupo(codigo) as { nome?: string; sorteio?: boolean }; // Define the expected shape of grupo
+
+  console.log("copied: ", copied);
 
   // Persiste login no storage ao logar
   const setUsuarioLogado = useCallback((user: any) => {
