@@ -3,34 +3,35 @@ import Stripe from "stripe";
 import { NextRequest, NextResponse } from "next/server";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-05-28.basil",
+  apiVersion: "2025-05-28.basil", // Use uma versão estável!
 });
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  // use os dados de body aqui...
-
   try {
+    const body = await req.json();
+
+    // Checa se todos os campos necessários vieram no body
+    const { groupId, userId, blockedId } = body;
+    if (!groupId || !userId || !blockedId) {
+      return NextResponse.json({ error: "Campos obrigatórios ausentes." }, { status: 400 });
+    }
+
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'], // usar 'card' por enquanto
+      payment_method_types: ['card'], // Somente cartão, por enquanto
       line_items: [
         {
           price_data: {
             currency: 'brl',
             product_data: { name: 'Preferência premium' },
-            unit_amount: 990,
+            unit_amount: 990, // R$9,90 em centavos
           },
           quantity: 1,
         },
       ],
       mode: 'payment',
-      success_url: 'https://SEU_SITE.com/sucesso',
-      cancel_url: 'https://SEU_SITE.com/cancelado',
-      metadata: {
-        groupId: body.groupId,
-        userId: body.userId,
-        blockedId: body.blockedId
-      }
+      success_url: 'http://localhost:3000/sucesso', // Altere para domínio real em produção!
+      cancel_url: 'http://localhost:3000/cancelado', // Altere depois
+      metadata: { groupId, userId, blockedId }
     });
 
     return NextResponse.json({ url: session.url });
