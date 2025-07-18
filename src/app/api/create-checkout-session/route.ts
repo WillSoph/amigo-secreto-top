@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
           price_data: {
             currency: 'brl',
             product_data: { name: 'Preferência premium' },
-            unit_amount: 990, // R$9,90 em centavos
+            unit_amount: 1100, // R$11,00 em centavos
           },
           quantity: 1,
         },

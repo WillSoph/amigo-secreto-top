@@ -22,6 +22,16 @@ export async function POST(request: Request) {
   const buf = Buffer.from(rawBody);
   const sig = request.headers.get("stripe-signature");
 
+  // LOG para depuração (atenção: não logar chaves privadas em produção)
+  if (!sig) {
+    console.error("Stripe-Signature header missing!");
+    return new Response("Missing signature", { status: 400 });
+  }
+  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+    console.error("Stripe webhook secret missing!");
+    return new Response("Webhook secret not set", { status: 400 });
+  }
+
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(

@@ -276,6 +276,11 @@ export default function GroupTabs({
               {naoQueroMsg && <div className="text-green-700 mt-1">{naoQueroMsg}</div>}
             </div>
           )}
+          {usuario?.blockedId && (
+            <div className="mt-3 text-blue-700 font-medium">
+              Sua preferência premium: você não tirará <b>{participantes.find(p => p.id === usuario.blockedId)?.nome || "participante desconhecido"}</b>.
+            </div>
+          )}
           {/* Amigo oculto */}
           {grupo.sorteio ? (
             <div className="mt-4">
