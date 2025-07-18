@@ -3,13 +3,14 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDz0h4abiMep9Jd3rDW6fvAq_M7RtENi4g",
-    authDomain: "amigo-secreto-66dfc.firebaseapp.com",
-    projectId: "amigo-secreto-66dfc",
-    storageBucket: "amigo-secreto-66dfc.firebasestorage.app",
-    messagingSenderId: "611225557600",
-    appId: "1:611225557600:web:a12a2527b7a00664ea0105"
-  };
+  apiKey: "AIzaSyAUUmGCCAbM4W4qjsHzHGmr0-DuoenvjF4",
+  authDomain: "amigo-secreto-7e4a2.firebaseapp.com",
+  projectId: "amigo-secreto-7e4a2",
+  storageBucket: "amigo-secreto-7e4a2.firebasestorage.app",
+  messagingSenderId: "153613873221",
+  appId: "1:153613873221:web:e1b3d6c05e390a6a21f32c",
+  measurementId: "G-B8KL2BLCQB"
+};
 
   const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 
