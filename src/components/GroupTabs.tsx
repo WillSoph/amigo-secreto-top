@@ -114,11 +114,12 @@ export default function GroupTabs({
       setErro("Nome ou senha inválidos.");
       return;
     }
-    const p: { id: string; nome: string; isAdmin: boolean; desejo?: string } = {
+    const p: { id: string; nome: string; isAdmin: boolean; desejo?: string; blockedId?: string } = {
       id: encontrados[0].id,
       nome: 'nome' in encontrados[0] ? (encontrados[0].nome as string) : "",
       isAdmin: 'isAdmin' in encontrados[0] ? !!encontrados[0].isAdmin : false,
       desejo: 'desejo' in encontrados[0] ? (encontrados[0].desejo as string) : undefined,
+      blockedId: 'blockedId' in encontrados[0] ? (encontrados[0].blockedId as string) : "",
     };
     setUsuario(p);
     setDesejo(p.desejo || "");
@@ -150,6 +151,17 @@ export default function GroupTabs({
       amigoObj = participantes.find((p: any) => p.id === amigoOcultoId);
     }
   }
+
+  useEffect(() => {
+    if (usuario && participantes.length) {
+      const userFirestore = participantes.find(p => p.id === usuario.id);
+      if (userFirestore) {
+        setUsuario(userFirestore);
+        localStorage.setItem(getStorageKey(groupCode), JSON.stringify(userFirestore));
+      }
+    }
+    // eslint-disable-next-line
+  }, [participantes]);
 
   return (
     <div className="mt-6 sm:mt-10">
@@ -246,7 +258,7 @@ export default function GroupTabs({
             {desejoMsg && <div className="text-green-700 mt-1">{desejoMsg}</div>}
           </div>
           {/* Preferência premium */}
-          {grupo.sorteio == null && (
+          {grupo.sorteio == null && !usuario?.blockedId && (
             <div className="mt-4">
               <label className="font-semibold block mb-1">
                 Quem você NÃO quer tirar? <span className="text-xs text-slate-400">(Premium)</span>
