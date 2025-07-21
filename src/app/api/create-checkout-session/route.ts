@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: 'payment',
-      success_url: 'http://localhost:3000/sucesso', // Altere para domínio real em produção!
-      cancel_url: 'http://localhost:3000/cancelado', // Altere depois
+      success_url: 'https://www.amigosecretotop.com.br/sucesso', // Altere para domínio real em produção!
+      cancel_url: 'https://www.amigosecretotop.com.br/cancelado', // Altere depois
       metadata: { groupId, userId, blockedId }
     });
 

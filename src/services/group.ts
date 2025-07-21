@@ -51,26 +51,59 @@ export async function getGrupoByCodigo(codigo: string) {
     await deleteDoc(doc(db, "groups", codigo));
   }
   
-  // Rodar sorteio
+  // Rodar sorteio - Respeita o blockedId
+  type Participante = {
+    id: string;
+    blockedId?: string;
+    nome?: string;
+    senha?: string;
+    isAdmin?: boolean;
+    desejo?: string;
+    // ...outros campos
+  };
+  
   export async function rodarSorteioGrupo(groupCode: string) {
     const snapshot = await getDocs(collection(db, "groups", groupCode, "participants"));
-    const participantes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-    if (participantes.length < 2) throw new Error("Precisa de pelo menos 3 participantes!");
+    const participantes: Participante[] = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
   
-    // Embaralha:
-    const sorteio: Record<string, string> = {};
-    const list = [...participantes];
-    for (let i = list.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [list[i], list[j]] = [list[j], list[i]];
-    }
-    // Atribui
-    for (let i = 0; i < list.length; i++) {
-      sorteio[list[i].id] = list[(i + 1) % list.length].id;
-    }
-    // Salva no grupo
+    if (participantes.length < 3) throw new Error("Precisa de pelo menos 3 participantes!");
+  
+    // Função para validar se o sorteio respeita os blockedId
+    const isValid = (result: Record<string, string>) => {
+      return participantes.every(participante => {
+        if (participante.blockedId) {
+          return result[participante.id] !== participante.blockedId;
+        }
+        return true;
+      });
+    };
+  
+    let sorteio: Record<string, string> = {};
+    let tentativas = 0;
+    const maxTentativas = 1000;
+  
+    do {
+      // Embaralha
+      const list = [...participantes];
+      for (let i = list.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [list[i], list[j]] = [list[j], list[i]];
+      }
+      sorteio = {};
+      for (let i = 0; i < list.length; i++) {
+        sorteio[list[i].id] = list[(i + 1) % list.length].id;
+      }
+      tentativas++;
+      if (tentativas > maxTentativas) throw new Error("Não foi possível sortear respeitando as preferências premium. Tente remover algum bloqueio.");
+    } while (!isValid(sorteio));
+  
     await updateDoc(doc(db, "groups", groupCode), { sorteio });
   }
+  
+
   
   // Resetar grupo
   export async function resetarGrupo(groupCode: string) {

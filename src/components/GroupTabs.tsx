@@ -163,6 +163,10 @@ export default function GroupTabs({
     // eslint-disable-next-line
   }, [participantes]);
 
+  useEffect(() => {
+    atualizarGrupo();
+  }, []);
+
   return (
     <div className="mt-6 sm:mt-10">
       {!usuario && (
