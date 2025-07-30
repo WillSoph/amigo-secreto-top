@@ -2,7 +2,67 @@
 
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+// =====================
+// MODAL PARA ACESSAR GRUPO
+// =====================
+function AcessarGrupoModal() {
+  const [open, setOpen] = useState(false);
+  const [codigo, setCodigo] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const router = useRouter();
+
+  function handleAcessar(e: React.FormEvent) {
+    e.preventDefault();
+    if (!codigo.trim()) {
+      setErro("Digite o código do grupo.");
+      return;
+    }
+    setErro(null);
+    setOpen(false);
+    router.push(`/grupo/${codigo.trim()}`);
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          className="bg-white text-primary border-primary font-semibold rounded-xl shadow"
+          size="lg"
+        >
+          Acesse seu grupo
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="w-full max-w-xs mx-auto">
+        <DialogHeader>
+          <DialogTitle>Acessar Grupo</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleAcessar} className="space-y-3">
+          <div>
+            <label className="font-semibold text-primary">Código do Grupo</label>
+            <Input
+              value={codigo}
+              className="mt-1"
+              onChange={e => setCodigo(e.target.value)}
+              placeholder="Ex: QWERTY"
+              required
+              autoFocus
+            />
+          </div>
+          {erro && <div className="text-red-500 text-sm">{erro}</div>}
+          <Button type="submit" className="w-full btn-tertiary mt-2">
+            Acessar
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export default function Sucesso() {
   const router = useRouter();
@@ -48,13 +108,16 @@ export default function Sucesso() {
             Agora é só voltar ao seu grupo e aproveitar a brincadeira com ainda mais diversão e tranquilidade.<br />
             Obrigado por usar o <b>Amigo Secreto Top</b>!
           </p>
+          <div className="flex justify-center items-center gap-2 mt-4">
           <Button
-            className="mt-4 bg-secondary text-foreground hover:bg-primary hover:text-white font-semibold rounded-xl shadow"
+            className=" bg-secondary text-foreground hover:bg-primary hover:text-white font-semibold rounded-xl shadow"
             size="lg"
             onClick={() => router.push("/")}
           >
             Voltar para a página inicial
           </Button>
+          <AcessarGrupoModal />
+          </div>
         </div>
       </section>
 

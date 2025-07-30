@@ -8,6 +8,7 @@ import {
   buscarParticipantePorNomeSenha,
   atualizarDesejo
 } from "@/services/participant";
+import { Pencil } from "lucide-react";
 
 type Props = {
   groupCode: string;
@@ -35,6 +36,7 @@ export default function GroupTabs({
   const [desejoMsg, setDesejoMsg] = useState("");
   const [naoQueroTirar, setNaoQueroTirar] = useState("");
   const [naoQueroMsg, setNaoQueroMsg] = useState("");
+  const [editandoDesejo, setEditandoDesejo] = useState(false);
 
   // Recupera login salvo ao montar
   useEffect(() => {
@@ -94,11 +96,10 @@ export default function GroupTabs({
       return;
     }
     await addParticipante(groupCode, nome.trim(), senha.trim());
-    setNome("");
-    setSenha("");
-    atualizarGrupo();
-    setErro("Participante cadastrado! Agora faça login.");
-    setTab("login");
+      setNome("");
+      setSenha("");
+      setErro("Participante cadastrado!");
+      atualizarGrupo();
   }
 
   // Login
@@ -154,14 +155,20 @@ export default function GroupTabs({
 
   useEffect(() => {
     if (usuario && participantes.length) {
-      const userFirestore = participantes.find(p => p.id === usuario.id);
-      if (userFirestore) {
+      const userFirestore = participantes.find((p: any) => p.id === usuario.id);
+      if (
+        userFirestore &&
+        // Evita sobrescrever se for igual (ajuda em UX de desejo digitando)
+        JSON.stringify(userFirestore) !== JSON.stringify(usuario)
+      ) {
         setUsuario(userFirestore);
+        setDesejo(userFirestore.desejo || ""); // Mantém o desejo sincronizado também
         localStorage.setItem(getStorageKey(groupCode), JSON.stringify(userFirestore));
       }
     }
     // eslint-disable-next-line
   }, [participantes]);
+  
 
   useEffect(() => {
     atualizarGrupo();
@@ -245,20 +252,56 @@ export default function GroupTabs({
           </div>
           {/* Campo de desejo */}
           <div className="mt-4">
-            <label className="font-semibold">O que você quer ganhar?</label>
-            <Input
-              value={desejo}
-              onChange={e => setDesejo(e.target.value)}
-              placeholder="Ex: Um livro, chocolate..."
-              className="mt-1 w-full"
-            />
-            <Button
-              onClick={handleSalvarDesejo}
-              className="mt-2 w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded"
-              type="button"
-            >
-              Salvar
-            </Button>
+            <label className="font-semibold block mb-1">O que você quer ganhar?</label>
+            
+            {/* Se NÃO estiver editando E já houver desejo salvo */}
+            {!editandoDesejo && desejo && (
+              <div className="flex items-center gap-2">
+                <span className="text-base text-slate-700">{desejo}</span>
+                <button
+                  className="p-1 rounded hover:bg-slate-200 transition"
+                  onClick={() => setEditandoDesejo(true)}
+                  title="Editar desejo"
+                  type="button"
+                >
+                  <Pencil size={18} />
+                </button>
+              </div>
+            )}
+
+            {/* Se estiver editando OU ainda não tem desejo */}
+            {(editandoDesejo || !desejo) && (
+              <div className="flex gap-2 items-center">
+                <Input
+                  value={desejo}
+                  onChange={e => setDesejo(e.target.value)}
+                  placeholder="Ex: Um livro, chocolate..."
+                  className="w-full"
+                />
+                <Button
+                  onClick={async () => {
+                    await handleSalvarDesejo();
+                    setEditandoDesejo(false);
+                  }}
+                  className=""
+                  type="button"
+                >
+                  Salvar
+                </Button>
+                {editandoDesejo && (
+                  <button
+                    className="p-1 rounded hover:bg-slate-200 transition"
+                    onClick={() => setEditandoDesejo(false)}
+                    title="Cancelar"
+                    type="button"
+                  >
+                    {/* Você pode usar um ícone de X aqui se quiser */}
+                    <span className="text-xl font-bold">&times;</span>
+                  </button>
+                )}
+              </div>
+            )}
+
             {desejoMsg && <div className="text-green-700 mt-1">{desejoMsg}</div>}
           </div>
           {/* Preferência premium */}
