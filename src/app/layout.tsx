@@ -3,12 +3,15 @@ import { Toaster } from "@/components/ui/sonner"
 
 export const metadata = {
   title: "Amigo Secreto Top - Sorteio Online Fácil, Rápido e Divertido",
+  icons: {
+    icon: "/favicon.png",
+  },
   description: "Organize seu amigo secreto online de forma fácil, rápida e divertida! Compartilhe o link com seus amigos, personalize seu grupo e faça o sorteio automático. Grátis, seguro e sem cadastro.",
   keywords: "amigo secreto, amigo secreto online, amigo oculto, sorteio amigo secreto, sorteio online, grupo amigo secreto, sorteio amigo oculto online, sorteio fácil, sorteio rápido, natal, presente, brincadeira, organizador amigo secreto, secret santa, gift exchange",
   openGraph: {
     title: "Amigo Secreto Top - Sorteio Online Fácil",
     description: "Crie seu grupo de amigo secreto online, compartilhe o link e faça o sorteio automático. Simples, seguro e divertido!",
-    url: "https://amigosecretotop.com",
+    url: "https://amigosecretotop.com.br",
     siteName: "Amigo Secreto Top",
     images: [
       {

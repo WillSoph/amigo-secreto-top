@@ -14,6 +14,66 @@ import Image from "next/image";
 import { Depoimento } from "@/components/Depoimento";
 import { PoliticaPrivacidadeModal } from "@/components/PoliticaPrivacidadeModal";
 
+// =====================
+// MODAL PARA ACESSAR GRUPO
+// =====================
+function AcessarGrupoModal() {
+  const [open, setOpen] = useState(false);
+  const [codigo, setCodigo] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const router = useRouter();
+
+  function handleAcessar(e: React.FormEvent) {
+    e.preventDefault();
+    if (!codigo.trim()) {
+      setErro("Digite o código do grupo.");
+      return;
+    }
+    setErro(null);
+    setOpen(false);
+    router.push(`/grupo/${codigo.trim()}`);
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          className="bg-white text-primary border-primary font-semibold rounded-xl shadow"
+          size="lg"
+        >
+          Acesse seu grupo
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="w-full max-w-xs mx-auto">
+        <DialogHeader>
+          <DialogTitle>Acessar Grupo</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleAcessar} className="space-y-3">
+          <div>
+            <label className="font-semibold text-primary">Código do Grupo</label>
+            <Input
+              value={codigo}
+              className="mt-1"
+              onChange={e => setCodigo(e.target.value)}
+              placeholder="Ex: QWERTY"
+              required
+              autoFocus
+            />
+          </div>
+          {erro && <div className="text-red-500 text-sm">{erro}</div>}
+          <Button type="submit" className="w-full btn-tertiary mt-2">
+            Acessar
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// =====================
+// DADOS DEPOIMENTOS
+// =====================
 const depoimentos = [
   {
     foto: "/depoimento1.png",
@@ -27,6 +87,9 @@ const depoimentos = [
   },
 ];
 
+// =====================
+// PÁGINA INICIAL
+// =====================
 export default function Home() {
   const router = useRouter();
   const [nomeCriador, setNomeCriador] = useState("");
@@ -77,13 +140,6 @@ export default function Home() {
 
   return (
     <main className="bg-background min-h-screen text-text">
-      {/* Header */}
-      {/* <header className="flex items-center justify-between px-4 py-4 sm:px-6 md:px-8">
-        <div className="font-bold text-xl sm:text-2xl text-primary tracking-tight">
-          amigosecretotop
-        </div>
-      </header> */}
-
       {/* Hero Section */}
       <section className="relative min-h-[450px] md:min-h-[560px] flex items-center justify-center overflow-hidden">
         {/* Imagem de fundo */}
@@ -112,71 +168,74 @@ export default function Home() {
               priority
             />
           </div>
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-lg leading-tight">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-lg leading-tight text-center">
             Amigo Secreto Online <span className="text-secondary">/ Amigo Oculto Online</span>
           </h1>
-          <p className="text-base md:text-xl text-white/90 max-w-lg drop-shadow">
+          <p className="text-base md:text-xl text-white/90 max-w-lg drop-shadow text-center">
             Organize seu <strong>amigo secreto</strong> virtual em poucos cliques. Não é necessário cadastro, nem telefone, nem e-mail.
             <br className="hidden md:block" />
             Compartilhe o link do grupo e todos podem participar!
           </p>
-          <ul className="text-white/90 text-sm md:text-base list-disc list-inside pl-2 space-y-1">
+          <ul className="text-white/90 text-sm md:text-base list-disc list-inside pl-2 space-y-1 text-left">
             <li>🎁 Sorteio automático e seguro</li>
             <li>🎄 Ideal para Natal, empresa, amigos e família</li>
             <li>🔒 Aqui as pessoas <b>NÃO PODEM</b> escolher quem querem tirar</li>
           </ul>
-          {/* Botão que abre o Dialog */}
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button
-                variant="default"
-                className="mt-2 bg-secondary text-foreground hover:bg-primary hover:text-white font-semibold rounded-xl shadow"
-                size="lg"
-              >
-                Crie seu grupo agora
-              </Button>
-            </DialogTrigger>
-            <DialogContent className=" w-full max-w-sm mx-auto">
-              <DialogHeader>
-                <DialogTitle>Crie seu grupo de Amigo Secreto</DialogTitle>
-              </DialogHeader>
-              <Card className="shadow-lg border-primary w-full">
-                <CardContent className="p-4 bg-white rounded">
-                  <form onSubmit={handleSubmit} className="space-y-3">
-                    <div>
-                      <label className="font-semibold text-primary">Seu Nome</label>
-                      <Input value={nomeCriador} onChange={e => setNomeCriador(e.target.value)} placeholder="Digite seu nome" required />
-                    </div>
-                    <div>
-                      <label className="font-semibold text-primary">Sua Senha</label>
-                      <Input type="password" value={senhaCriador} onChange={e => setSenhaCriador(e.target.value)} placeholder="Defina uma senha" required />
-                    </div>
-                    <div>
-                      <label className="font-semibold text-primary">Nome do Grupo</label>
-                      <Input value={nomeGrupo} onChange={e => setNomeGrupo(e.target.value)} placeholder="Ex: Grupo dos Devs" required />
-                    </div>
-                    <div>
-                      <label className="font-semibold text-primary">Descrição</label>
-                      <Input value={descricao} onChange={e => setDescricao(e.target.value)} placeholder="Ex: Natal da firma, equipe remota, família, amigos..." />
-                    </div>
-                    {erro && <div className="text-red-500 text-sm mb-2">{erro}</div>}
-                    <Button
-                      className="w-full btn-tertiary mt-2"
-                      disabled={
-                        loading ||
-                        !nomeCriador.trim() ||
-                        !senhaCriador.trim() ||
-                        !nomeGrupo.trim() ||
-                        !descricao.trim()
-                      }
-                    >
-                      {loading ? "Criando..." : "Criar grupo agora"}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </DialogContent>
-          </Dialog>
+          {/* Botões de criar e acessar grupo */}
+          <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto mt-2">
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="default"
+                  className="bg-secondary text-foreground hover:bg-primary hover:text-white font-semibold rounded-xl shadow"
+                  size="lg"
+                >
+                  Crie seu grupo agora
+                </Button>
+              </DialogTrigger>
+              <DialogContent className=" w-full max-w-sm mx-auto">
+                <DialogHeader>
+                  <DialogTitle>Crie seu grupo de Amigo Secreto</DialogTitle>
+                </DialogHeader>
+                <Card className="shadow-lg border-primary w-full">
+                  <CardContent className="p-4 bg-white rounded">
+                    <form onSubmit={handleSubmit} className="space-y-3">
+                      <div>
+                        <label className="font-semibold text-primary">Seu Nome</label>
+                        <Input value={nomeCriador} onChange={e => setNomeCriador(e.target.value)} placeholder="Digite seu nome" required />
+                      </div>
+                      <div>
+                        <label className="font-semibold text-primary">Sua Senha</label>
+                        <Input type="password" value={senhaCriador} onChange={e => setSenhaCriador(e.target.value)} placeholder="Defina uma senha" required />
+                      </div>
+                      <div>
+                        <label className="font-semibold text-primary">Nome do Grupo</label>
+                        <Input value={nomeGrupo} onChange={e => setNomeGrupo(e.target.value)} placeholder="Ex: Grupo dos Devs" required />
+                      </div>
+                      <div>
+                        <label className="font-semibold text-primary">Descrição</label>
+                        <Input value={descricao} onChange={e => setDescricao(e.target.value)} placeholder="Ex: Natal da firma, equipe remota, família, amigos..." />
+                      </div>
+                      {erro && <div className="text-red-500 text-sm mb-2">{erro}</div>}
+                      <Button
+                        className="w-full btn-tertiary mt-2"
+                        disabled={
+                          loading ||
+                          !nomeCriador.trim() ||
+                          !senhaCriador.trim() ||
+                          !nomeGrupo.trim() ||
+                          !descricao.trim()
+                        }
+                      >
+                        {loading ? "Criando..." : "Criar grupo agora"}
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              </DialogContent>
+            </Dialog>
+            <AcessarGrupoModal />
+          </div>
         </div>
       </section>
 
@@ -198,24 +257,25 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Depoimentos */}
       <section className="bg-white py-10 md:py-16">
-      <div className="max-w-3xl mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-bold text-primary mb-8 text-center">O que estão dizendo…</h2>
-        {/* Mobile: Slider | Desktop: 2 depoimentos lado a lado */}
-        <div className="flex flex-col md:flex-row md:justify-center md:gap-8 items-center">
-          {/* Mobile: mostra só 1 depoimento com slide */}
-          <div className="w-full md:hidden transition-all duration-300">
-            <Depoimento {...depoimentos[idx]} />
-          </div>
-          {/* Desktop: mostra os 2 depoimentos */}
-          <div className="hidden md:flex md:gap-10 w-full justify-center">
-            {depoimentos.map((dep, i) => (
-              <Depoimento key={i} {...dep} />
-            ))}
+        <div className="max-w-3xl mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-primary mb-8 text-center">O que estão dizendo…</h2>
+          {/* Mobile: Slider | Desktop: 2 depoimentos lado a lado */}
+          <div className="flex flex-col md:flex-row md:justify-center md:gap-8 items-center">
+            {/* Mobile: mostra só 1 depoimento com slide */}
+            <div className="w-full md:hidden transition-all duration-300">
+              <Depoimento {...depoimentos[idx]} />
+            </div>
+            {/* Desktop: mostra os 2 depoimentos */}
+            <div className="hidden md:flex md:gap-10 w-full justify-center">
+              {depoimentos.map((dep, i) => (
+                <Depoimento key={i} {...dep} />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
       {/* Footer */}
       <footer className="bg-primary text-white py-8">
@@ -224,8 +284,8 @@ export default function Home() {
             amigosecretotop &copy; {new Date().getFullYear()} - Amigo Secreto Online
           </div>
           <div className="space-x-4">
-          <PoliticaPrivacidadeModal />
-          <a href="#" className="hover:underline text-secondary">Contato</a>
+            <PoliticaPrivacidadeModal />
+            <a href="#" className="hover:underline text-secondary">Contato</a>
           </div>
         </div>
       </footer>
