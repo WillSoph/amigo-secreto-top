@@ -1,3 +1,4 @@
+import { Manrope } from "next/font/google";
 import './globals.css'
 import { Toaster } from "@/components/ui/sonner"
 
@@ -34,12 +35,19 @@ export const metadata = {
 
 import { ReactNode } from "react";
 
+
+// const manrope = Manrope({
+//   subsets: ["latin"],
+//   variable: "--font-manrope",
+//   display: "swap",
+// });
+
+const manrope = Manrope({ subsets: ["latin"], display: "swap" });
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-br">
-      <head>
-      </head>
-      <body>
+    <html lang="pt-br" className={manrope.className}>
+      <body className="font-sans">
         <Toaster />
         {children}
       </body>

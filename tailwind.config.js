@@ -19,7 +19,10 @@ module.exports = {
         tertiary: 'var(--tertiary)',
         'tertiary-hover': 'var(--tertiary-hover)',
         'tertiary-foreground': 'var(--tertiary-foreground)',
-      }
+      },
+      fontFamily: {
+        sans: ['var(--font-manrope)', 'Inter', 'sans-serif'],
+      },
     },
   },
   plugins: [],

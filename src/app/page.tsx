@@ -62,7 +62,7 @@ function AcessarGrupoModal() {
             />
           </div>
           {erro && <div className="text-red-500 text-sm">{erro}</div>}
-          <Button type="submit" className="w-full btn-tertiary mt-2">
+          <Button variant="default" type="submit" className="w-full mt-2">
             Acessar
           </Button>
         </form>
@@ -158,7 +158,7 @@ export default function Home() {
         <div className="relative z-10 px-5 w-full max-w-2xl flex flex-col items-center gap-4 md:gap-7">
 
           {/* Logo */}
-          <div className="mb-2">
+          <div className="mb-2 mt-2">
             <Image
               src="/amigo-secreto-top-logo.png"
               alt="Logo Amigo Secreto Top"
@@ -182,7 +182,7 @@ export default function Home() {
             <li>🔒 Aqui as pessoas <b>NÃO PODEM</b> escolher quem querem tirar</li>
           </ul>
           {/* Botões de criar e acessar grupo */}
-          <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto mt-2">
+          <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto mt-2 pb-3">
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button
@@ -218,7 +218,8 @@ export default function Home() {
                       </div>
                       {erro && <div className="text-red-500 text-sm mb-2">{erro}</div>}
                       <Button
-                        className="w-full btn-tertiary mt-2"
+                        variant="default"
+                        className="w-full mt-2"
                         disabled={
                           loading ||
                           !nomeCriador.trim() ||

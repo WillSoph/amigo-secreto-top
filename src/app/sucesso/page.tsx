@@ -55,7 +55,7 @@ function AcessarGrupoModal() {
             />
           </div>
           {erro && <div className="text-red-500 text-sm">{erro}</div>}
-          <Button type="submit" className="w-full btn-tertiary mt-2">
+          <Button variant="default" type="submit" className="w-full mt-2">
             Acessar
           </Button>
         </form>
