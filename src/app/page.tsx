@@ -14,9 +14,9 @@ import Image from "next/image";
 import { Depoimento } from "@/components/Depoimento";
 import { PoliticaPrivacidadeModal } from "@/components/PoliticaPrivacidadeModal";
 
-// =====================
-// MODAL PARA ACESSAR GRUPO
-// =====================
+/* =====================
+   MODAL: ACESSAR GRUPO
+===================== */
 function AcessarGrupoModal() {
   const [open, setOpen] = useState(false);
   const [codigo, setCodigo] = useState("");
@@ -39,7 +39,7 @@ function AcessarGrupoModal() {
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="bg-white text-primary border-primary font-semibold rounded-xl shadow"
+          className="bg-white text-primary border-primary font-semibold rounded-2xl shadow"
           size="lg"
         >
           Acesse seu grupo
@@ -55,7 +55,7 @@ function AcessarGrupoModal() {
             <Input
               value={codigo}
               className="mt-1"
-              onChange={e => setCodigo(e.target.value)}
+              onChange={(e) => setCodigo(e.target.value)}
               placeholder="Ex: QWERTY"
               required
               autoFocus
@@ -71,9 +71,9 @@ function AcessarGrupoModal() {
   );
 }
 
-// =====================
-// DADOS DEPOIMENTOS
-// =====================
+/* =====================
+   DADOS DEPOIMENTOS
+===================== */
 const depoimentos = [
   {
     foto: "/depoimento1.png",
@@ -87,9 +87,9 @@ const depoimentos = [
   },
 ];
 
-// =====================
-// PÁGINA INICIAL
-// =====================
+/* =====================
+   PÁGINA INICIAL
+===================== */
 export default function Home() {
   const router = useRouter();
   const [nomeCriador, setNomeCriador] = useState("");
@@ -133,61 +133,78 @@ export default function Home() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setIdx(i => (i + 1) % depoimentos.length);
+      setIdx((i) => (i + 1) % depoimentos.length);
     }, 3500);
     return () => clearInterval(timer);
   }, []);
 
   return (
     <main className="bg-background min-h-screen text-text">
-      {/* Hero Section */}
-      <section className="relative min-h-[450px] md:min-h-[560px] flex items-center justify-center overflow-hidden">
-        {/* Imagem de fundo */}
-        <div className="absolute inset-0 w-full h-full z-0">
+      {/* ===================== HERO ===================== */}
+      <section className="relative min-h-[520px] flex items-center overflow-hidden">
+        {/* Imagem base */}
+        <div className="absolute inset-0">
           <Image
             src="/hero-party.png"
             alt="Festa de amigos comemorando"
             fill
-            style={{ objectFit: "cover" }}
             priority
+            style={{ objectFit: "cover" }}
           />
-          <div className="absolute inset-0 bg-[#ffb6b6]/60 md:bg-[#ffb6b6]/70 mix-blend-multiply" />
-          <div className="absolute inset-0 bg-black/30 md:bg-black/40" />
         </div>
-        {/* Conteúdo do Hero */}
-        <div className="relative z-10 px-5 w-full max-w-2xl flex flex-col items-center gap-4 md:gap-7">
+
+        {/* Overlays */}
+        <div className="absolute inset-0 bg-black/35" />
+        <div className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-secondary/50 blur-3xl animate-pulse" />
+        <div className="pointer-events-none absolute -bottom-24 -right-24 h-[28rem] w-[28rem] rounded-full bg-primary/40 blur-[100px]" />
+
+        {/* Conteúdo */}
+        <div className="relative z-10 mx-auto w-full max-w-3xl px-5 py-14 text-white text-center">
+          {/* Mini-badge */}
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-1 mb-4">
+            <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-sm">Sem cadastro • Sorteio seguro • Grátis</span>
+          </div>
 
           {/* Logo */}
-          <div className="mb-2 mt-2">
+          <div className="mb-2 flex justify-center">
             <Image
               src="/amigo-secreto-top-logo.png"
               alt="Logo Amigo Secreto Top"
-              width={160}
-              height={48}
+              width={180}
+              height={54}
               className="drop-shadow-lg"
               priority
             />
           </div>
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white drop-shadow-lg leading-tight text-center">
-            Amigo Secreto Online <span className="text-secondary">/ Amigo Oculto Online</span>
+
+          <h1 className="text-4xl md:text-6xl font-extrabold leading-tight drop-shadow-md">
+            Amigo Secreto Online <span className="text-secondary">divertido</span> e sem fricção
           </h1>
-          <p className="text-base md:text-xl text-white/90 max-w-lg drop-shadow text-center">
-            Organize seu <strong>amigo secreto</strong> virtual em poucos cliques. Não é necessário cadastro, nem telefone, nem e-mail.
-            <br className="hidden md:block" />
-            Compartilhe o link do grupo e todos podem participar!
+
+          <p className="mt-4 text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
+            Crie o grupo, compartilhe o link e pronto. Todo mundo participa sem e-mail ou telefone.
           </p>
-          <ul className="text-white/90 text-sm md:text-base list-disc list-inside pl-2 space-y-1 text-left">
-            <li>🎁 Sorteio automático e seguro</li>
-            <li>🎄 Ideal para Natal, empresa, amigos e família</li>
-            <li>🔒 Aqui as pessoas <b>NÃO PODEM</b> escolher quem querem tirar</li>
+
+          {/* Chips */}
+          <ul className="mt-5 flex flex-wrap items-center justify-center gap-2">
+            {["Sorteio automático", "Sem cadastro", "Link compartilhável"].map((txt) => (
+              <li
+                key={txt}
+                className="text-sm bg-white/20 backdrop-blur px-3 py-1 rounded-full border border-white/30 text-white"
+              >
+                {txt}
+              </li>
+            ))}
           </ul>
-          {/* Botões de criar e acessar grupo */}
-          <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto mt-2 pb-3">
+
+          {/* Botões */}
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button
                   variant="default"
-                  className="bg-secondary text-foreground hover:bg-primary hover:text-white font-semibold rounded-xl shadow"
+                  className="rounded-2xl bg-secondary text-gray-900 px-5 py-3 font-semibold shadow-lg hover:-translate-y-[1px] hover:shadow-xl transition"
                   size="lg"
                 >
                   Crie seu grupo agora
@@ -202,19 +219,39 @@ export default function Home() {
                     <form onSubmit={handleSubmit} className="space-y-3">
                       <div>
                         <label className="font-semibold text-primary">Seu Nome</label>
-                        <Input value={nomeCriador} onChange={e => setNomeCriador(e.target.value)} placeholder="Digite seu nome" required />
+                        <Input
+                          value={nomeCriador}
+                          onChange={(e) => setNomeCriador(e.target.value)}
+                          placeholder="Digite seu nome"
+                          required
+                        />
                       </div>
                       <div>
                         <label className="font-semibold text-primary">Sua Senha</label>
-                        <Input type="password" value={senhaCriador} onChange={e => setSenhaCriador(e.target.value)} placeholder="Defina uma senha" required />
+                        <Input
+                          type="password"
+                          value={senhaCriador}
+                          onChange={(e) => setSenhaCriador(e.target.value)}
+                          placeholder="Defina uma senha"
+                          required
+                        />
                       </div>
                       <div>
                         <label className="font-semibold text-primary">Nome do Grupo</label>
-                        <Input value={nomeGrupo} onChange={e => setNomeGrupo(e.target.value)} placeholder="Ex: Grupo dos Devs" required />
+                        <Input
+                          value={nomeGrupo}
+                          onChange={(e) => setNomeGrupo(e.target.value)}
+                          placeholder="Ex: Grupo dos Devs"
+                          required
+                        />
                       </div>
                       <div>
                         <label className="font-semibold text-primary">Descrição</label>
-                        <Input value={descricao} onChange={e => setDescricao(e.target.value)} placeholder="Ex: Natal da firma, equipe remota, família, amigos..." />
+                        <Input
+                          value={descricao}
+                          onChange={(e) => setDescricao(e.target.value)}
+                          placeholder="Ex: Natal da firma, equipe remota, família, amigos..."
+                        />
                       </div>
                       {erro && <div className="text-red-500 text-sm mb-2">{erro}</div>}
                       <Button
@@ -235,14 +272,18 @@ export default function Home() {
                 </Card>
               </DialogContent>
             </Dialog>
+
             <AcessarGrupoModal />
           </div>
         </div>
       </section>
 
-      {/* Passos */}
-      <section className="bg-secondary text-gray-900 py-10 md:py-16">
-        <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 text-center px-2 sm:px-0">
+      {/* ===================== PASSOS ===================== */}
+      <section className="relative bg-secondary text-gray-900 pt-10 md:pt-16 pb-10 md:pb-16">
+        {/* Wave no topo – mesma cor do fundo */}
+        
+
+        <div className="relative z-10 max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 text-center px-2 sm:px-0">
           <div>
             <h3 className="font-bold mb-1 text-lg md:text-xl text-primary">1. Criar o grupo</h3>
             <p>Basta escolher um nome, senha e descrição. O link é gerado na hora!</p>
@@ -258,17 +299,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Depoimentos */}
+      {/* ===================== DEPOIMENTOS ===================== */}
       <section className="bg-white py-10 md:py-16">
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-primary mb-8 text-center">O que estão dizendo…</h2>
-          {/* Mobile: Slider | Desktop: 2 depoimentos lado a lado */}
+          {/* Mobile: 1 depoimento com slide / Desktop: 2 lado a lado */}
           <div className="flex flex-col md:flex-row md:justify-center md:gap-8 items-center">
-            {/* Mobile: mostra só 1 depoimento com slide */}
+            {/* Mobile */}
             <div className="w-full md:hidden transition-all duration-300">
               <Depoimento {...depoimentos[idx]} />
             </div>
-            {/* Desktop: mostra os 2 depoimentos */}
+            {/* Desktop */}
             <div className="hidden md:flex md:gap-10 w-full justify-center">
               {depoimentos.map((dep, i) => (
                 <Depoimento key={i} {...dep} />
@@ -278,7 +319,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* ===================== FOOTER ===================== */}
       <footer className="bg-primary text-white py-8">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-2 px-2 sm:px-0">
           <div>
