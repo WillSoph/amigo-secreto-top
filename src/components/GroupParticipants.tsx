@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "./ui/button";
-import { X } from "lucide-react";
-
+import { X, Crown } from "lucide-react";
 
 type Props = {
   participantes: any[];
@@ -10,47 +9,70 @@ type Props = {
   sorteioRealizado?: boolean;
 };
 
-export default function GroupParticipants({ participantes, isAdmin, onRemove, sorteioRealizado }: Props) {
+export default function GroupParticipants({
+  participantes,
+  isAdmin,
+  onRemove,
+  sorteioRealizado,
+}: Props) {
   return (
     <div className="mb-6">
-      <h2 className="font-semibold mb-3 text-lg md:text-xl">Participantes</h2>
-      <ul className="flex flex-col gap-3 max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100">
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-lg md:text-xl font-semibold">Participantes</h2>
+        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">
+          {participantes.length} {participantes.length === 1 ? "pessoa" : "pessoas"}
+        </span>
+      </div>
+
+      <ul className="flex flex-col gap-3 max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent pr-1">
         {participantes.length === 0 && (
-          <li className="text-slate-400 text-center py-6 rounded-lg bg-slate-50 shadow-inner">
+          <li className="rounded-2xl border border-dashed border-slate-300 bg-white py-8 text-center text-slate-400 shadow-sm">
             Nenhum participante ainda
           </li>
         )}
-        {participantes.map((p) => (
-          <li
-            key={p.id}
-            className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-3 shadow-sm transition gap-3 md:px-4 md:py-3"
-          >
-            <span className="flex items-center gap-3 min-w-0">
-              {/* Avatar e nome */}
-              <span className="bg-primary text-white font-bold flex items-center justify-center rounded-full w-10 h-10 text-base md:w-8 md:h-8 md:text-sm flex-shrink-0">
-                {p.nome[0]}
-              </span>
-              <span className="truncate font-medium text-base md:text-sm">{p.nome}</span>
-              {p.isAdmin && (
-                <span className="ml-1 px-2 py-0.5 text-xs bg-blue-200 text-blue-800 rounded font-semibold">
-                  admin
-                </span>
+
+        {participantes.map((p) => {
+          const initial = (p?.nome?.[0] || "?").toUpperCase();
+          return (
+            <li
+              key={p.id}
+              className="group flex items-center justify-between gap-3 rounded-2xl border bg-white px-3 py-3 shadow-sm transition hover:shadow-md md:px-4"
+            >
+              {/* Esquerda: avatar + nome + (admin) */}
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="relative flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/90 to-primary text-white font-semibold shadow-sm ring-4 ring-primary/10 md:h-9 md:w-9">
+                  {initial}
+                </div>
+
+                <div className="min-w-0 flex items-center gap-2">
+                  <span className="truncate text-sm md:text-[13px] font-semibold text-slate-900">
+                    {p.nome}
+                  </span>
+
+                  {p.isAdmin && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-semibold text-blue-800">
+                      <Crown size={12} /> admin
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Remover (somente admin, sem sorteio e não remove admin) */}
+              {isAdmin && !p.isAdmin && !sorteioRealizado && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="ml-2 flex-shrink-0 rounded-full hover:bg-red-50 hover:text-red-600"
+                  aria-label={`Remover ${p.nome}`}
+                  title={`Remover ${p.nome}`}
+                  onClick={() => onRemove(p.id)}
+                >
+                  <X size={18} />
+                </Button>
               )}
-            </span>
-            {/* Só mostra botão se não houve sorteio */}
-            {isAdmin && !p.isAdmin && !sorteioRealizado && (
-              <Button
-                size="sm"
-                variant="ghost"
-                className="ml-2 flex-shrink-0"
-                aria-label={`Remover ${p.nome}`}
-                onClick={() => onRemove(p.id)}
-              >
-                <X size={18} />
-              </Button>
-            )}
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
