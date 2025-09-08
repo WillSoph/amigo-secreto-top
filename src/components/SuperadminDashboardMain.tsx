@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { db } from "@/services/firebase";
 import {
   collection,
@@ -8,6 +8,8 @@ import {
   deleteDoc,
   doc,
   Timestamp,
+  QueryDocumentSnapshot,
+  DocumentData,
 } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +29,21 @@ import { format } from "date-fns";
 
 // Preço para cálculo da receita
 const PREMIUM_PRICE = 11.0;
+
+/** Tipos de dados do Firestore (mínimos necessários) */
+type GroupData = {
+  nome?: string;
+  name?: string;
+  codigo?: string;
+  createdAt?: Timestamp | Date | null;
+};
+
+type Participant = {
+  blockedId?: string;
+  isAdmin?: boolean;
+  name?: string;
+  nome?: string;
+};
 
 type Grupo = {
   id: string;
@@ -65,43 +82,52 @@ export default function SuperadminDashboardMain() {
   // Busca (lista de grupos)
   const [busca, setBusca] = useState("");
 
-  // Utilitários
-  function tsToDateMaybe(v: any): Date | null {
-    if (!v) return null;
-    if (v instanceof Date) return v;
-    const t: Timestamp | undefined = v as any;
-    if (t?.seconds) return new Date(t.seconds * 1000);
+  /** Converte Timestamp/Date/unknown para Date|null (sem any) */
+  function tsToDateMaybe(value: unknown): Date | null {
+    if (!value) return null;
+    if (value instanceof Date) return value;
+
+    const ts = value as Timestamp | undefined;
+    if (typeof ts?.seconds === "number") return new Date(ts.seconds * 1000);
+
     return null;
   }
 
-  async function buildGrupoRow(groupId: string, groupData: any): Promise<Grupo> {
-    const participantsSnap = await getDocs(
-      collection(db, "groups", groupId, "participants")
-    );
+  /** Monta uma linha de Grupo (tipada) */
+  const buildGrupoRow = useCallback(
+    async (groupDoc: QueryDocumentSnapshot<DocumentData, DocumentData>): Promise<Grupo> => {
+      const groupId = groupDoc.id;
+      const data = groupDoc.data() as GroupData;
 
-    let participantesCount = 0;
-    let premiumCount = 0;
-    let adminName: string | undefined;
+      const participantsSnap = await getDocs(
+        collection(db, "groups", groupId, "participants")
+      );
 
-    participantsSnap.docs.forEach((pDoc) => {
-      const p = pDoc.data() as any;
-      participantesCount++;
-      if (p?.blockedId) premiumCount++;
-      if (p?.isAdmin) adminName = p?.name || p?.nome || "—";
-    });
+      let participantesCount = 0;
+      let premiumCount = 0;
+      let adminName: string | undefined;
 
-    const createdAt = tsToDateMaybe(groupData?.createdAt);
+      participantsSnap.docs.forEach((pDoc) => {
+        const p = pDoc.data() as Participant;
+        participantesCount++;
+        if (p.blockedId) premiumCount++;
+        if (p.isAdmin) adminName = p.name || p.nome || "—";
+      });
 
-    return {
-      id: groupId,
-      nome: groupData?.nome || groupData?.name || "",
-      codigo: groupData?.codigo || "",
-      participantesCount,
-      premiumCount,
-      adminName,
-      createdAt,
-    };
-  }
+      const createdAt = tsToDateMaybe(data?.createdAt);
+
+      return {
+        id: groupId,
+        nome: data?.nome || data?.name || "",
+        codigo: data?.codigo || "",
+        participantesCount,
+        premiumCount,
+        adminName,
+        createdAt,
+      };
+    },
+    []
+  );
 
   // DASHBOARD
   useEffect(() => {
@@ -123,7 +149,7 @@ export default function SuperadminDashboardMain() {
       let last30 = 0;
 
       for (const groupDoc of gruposSnap.docs) {
-        const row = await buildGrupoRow(groupDoc.id, groupDoc.data());
+        const row = await buildGrupoRow(groupDoc);
         gruposArray.push(row);
 
         totalUsuarios += row.participantesCount || 0;
@@ -177,7 +203,7 @@ export default function SuperadminDashboardMain() {
     }
 
     fetchDashboardData();
-  }, []);
+  }, [buildGrupoRow]);
 
   // LISTA DE GRUPOS (quando entra na aba)
   async function fetchGruposTable() {
@@ -185,7 +211,7 @@ export default function SuperadminDashboardMain() {
     const gruposSnap = await getDocs(collection(db, "groups"));
     const arr: Grupo[] = [];
     for (const groupDoc of gruposSnap.docs) {
-      const row = await buildGrupoRow(groupDoc.id, groupDoc.data());
+      const row = await buildGrupoRow(groupDoc);
       arr.push(row);
     }
     setGrupos(arr);
@@ -193,9 +219,10 @@ export default function SuperadminDashboardMain() {
   }
 
   useEffect(() => {
-    if (tab === "grupos") fetchGruposTable();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tab]);
+    if (tab === "grupos") {
+      void fetchGruposTable();
+    }
+  }, [tab]); // buildGrupoRow é estável (useCallback deps [])
 
   async function handleExcluirGrupo(groupId: string) {
     if (!window.confirm("Tem certeza que deseja excluir este grupo? Esta ação não pode ser desfeita.")) return;
@@ -225,8 +252,8 @@ export default function SuperadminDashboardMain() {
     // ordena por createdAt desc (mais recentes primeiro; nulos vão pro fim)
     filtrados.sort((a, b) => {
       const da = a.createdAt ? a.createdAt.getTime() : -Infinity;
-      const db = b.createdAt ? b.createdAt.getTime() : -Infinity;
-      return db - da;
+      const dbv = b.createdAt ? b.createdAt.getTime() : -Infinity;
+      return dbv - da;
     });
 
     return filtrados;
